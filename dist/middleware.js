@@ -10,13 +10,18 @@ const userMiddleware = (req, res, next) => {
     const token = req.headers.token;
     const decoded = jsonwebtoken_1.default.verify(token, config_1.JWT_PASSWORD);
     if (decoded) {
-        // @ts-ignore
+        if (typeof decoded === "string") {
+            res.status(403).json({
+                message: "You're not logged in"
+            });
+            return;
+        }
         req.userId = decoded.id;
         next();
     }
     else {
         res.status(403).json({
-            message: "You're not signed in"
+            message: "You're not logged in"
         });
     }
 };
